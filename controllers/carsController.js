@@ -273,7 +273,6 @@ exports.deleteCar = async (req,res)=>{
         })
 
     }catch(error){
-        console.log(error)
         res.status(500).json({
             status:500,
             success:false,
@@ -285,3 +284,73 @@ exports.deleteCar = async (req,res)=>{
     }
 }
 
+exports.setCarStatus = async (req,res)=>{
+    try{
+
+        const id = req.params.id
+        const available = req.query.available
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no car id provided"
+                }
+            })
+        }
+
+        const car = await Car.findByPk(id);
+        if(!car){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'Car not found'
+                }
+            })
+        }
+
+        if(!available){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no status query provided"
+                }
+            })
+        }
+        if (available !== '0' && available !== '1') {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:'Invalid availability value'
+                }
+            });
+        }
+
+        console.log(Boolean(Number(available)))
+        car.status = Boolean(Number(available));
+        await car.save()
+
+        res.status(200).json({
+            status:200,
+            success:true,
+            message:"Car availability updated successfully",
+            data:{
+                available:car.status,
+                car:car,
+            }
+        })
+
+    }catch(error){
+        res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
