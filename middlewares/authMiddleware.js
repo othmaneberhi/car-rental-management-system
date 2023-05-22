@@ -10,32 +10,27 @@ exports.protectRoute = async (req, res, next) => {
     try {
         token = token.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         const userId = decoded.userId;
         const refreshToken = await RefreshToken.findOne({ where: { userId } });
-
-
         if (!refreshToken || refreshToken.expiresAt < new Date()) {
             return res.status(401).json({  success:false,message: 'Unauthorized' });
         }
-
-        req.token=token
+        req.token = token;
+        console.log("toook: "+req.token)
         next();
     } catch (error) {
-        console.log(error)
         return res.status(401).json({
             success:false,
             message: error.message });
     }
 };
 
-exports.restrictLoginAccess = (req, res, next) => {
-    // Check if user is authenticated
+exports.isLoggedIn = (req, res, next) => {
+    // Check if user is authenticated ?
     console.log(req.token)
     if (req.token) {
         return res.status(403).json({ message: 'Already logged in' });
     }
-    // If user is not authenticated, proceed to the next middleware/route handler
     next();
 };
 

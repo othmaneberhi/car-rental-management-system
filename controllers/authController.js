@@ -68,7 +68,6 @@ exports.login = async (req, res) => {
             expiresAt: expiredAt.getTime()
         });
 
-
         res.status(200).json({
             success:true,
             data:{
@@ -90,7 +89,6 @@ exports.logout = async (req, res) => {
         const refreshToken = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
         const userId = decoded.userId;
-        console.log(userId)
         await RefreshToken.destroy({where:{userid:userId}})
         res.status(200).json({
             success:true,
