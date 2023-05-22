@@ -1,4 +1,4 @@
-const {Car} = require('../models')
+const {Car,Rental} = require('../models')
 const { Op } = require('sequelize');
 
 exports.findAllCars = async (req,res) =>{
@@ -235,7 +235,7 @@ exports.updateCar = async (req,res) => {
 
 exports.deleteCar = async (req,res)=>{
     try{
-        const id = req.params.id
+        const id = req.params.id;
         if(!id){
             return res.status(400).json({
                 status:400,
@@ -245,7 +245,9 @@ exports.deleteCar = async (req,res)=>{
                 }
             })
         }
-        const car = await Car.findByPk(id);
+        let car = await Car.findByPk(id,{
+            include:Rental,
+        });
         if(!car){
             return res.status(404).json({
                 status:404,
@@ -255,18 +257,23 @@ exports.deleteCar = async (req,res)=>{
                 }
             })
         }
-        let test = await car.destroy();
+        await Rental.destroy({where:{
+            car_id:car.id
+            }})
+        car = await car.destroy();
 
         res.status(200).json({
             status:200,
             success:true,
+            message:"Car and associated rentals deleted successfully",
             data:{
-                test:test,
+                rentals:car.Rental,
                 car:car,
             }
         })
 
     }catch(error){
+        console.log(error)
         res.status(500).json({
             status:500,
             success:false,
