@@ -67,6 +67,7 @@ exports.login = async (req, res) => {
             expiresAt: expiredAt.getTime()
         });
         res.status(200).json({
+            status:200,
             success:true,
             data:{
                 token:token,
@@ -76,8 +77,13 @@ exports.login = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({
+            status:500,
             success:false,
-            message: 'Internal server error' });
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        });
     }
 }
 
@@ -86,15 +92,22 @@ exports.logout = async (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
-        await token.destroy({where:{userid:userId}})
+
+        await RefreshToken.destroy({where:{userid:userId}})
         res.status(200).json({
+            status:200,
             success:true,
             message: 'Logout successful'
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({
+            status:500,
             success:false,
-            message: 'Logout failed'
+            error:{
+                error:error.code,
+                message:error.message
+            }
         });
     }
 };
