@@ -121,7 +121,6 @@ exports.findRentedCars = async (req,res) => {
             }
         })
     }catch(error){
-        console.log(error)
         res.status(500).json({
             status:500,
             success:false,
@@ -133,4 +132,27 @@ exports.findRentedCars = async (req,res) => {
     }
 }
 
+exports.addCar = async (req,res) => {
+    try{
+        let car = req.body;
+        car = await Car.create(car)
+        res.status(201).json({
+            status:201,
+            success:true,
+            data:{
+                car:car
+            }
+        })
+    }catch(error){
+        console.log(error)
+        res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
 
