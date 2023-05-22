@@ -8,7 +8,8 @@ router.get('/',protectRoute,carsController.findAllCars)
 router.get('/available',protectRoute,carsController.findAvailableCars)
 router.get('/rented',protectRoute,carsController.findRentedCars)
 router.get('/:id',protectRoute,carsController.findCarById)
-router.post('/add',protectRoute,carsController.addCar)
+router.put('/:id',protectRoute,carsController.updateCar)
+
 
 
 module.exports = router;

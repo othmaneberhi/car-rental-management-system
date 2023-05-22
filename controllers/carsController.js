@@ -139,7 +139,7 @@ exports.addCar = async (req,res) => {
                 status:400,
                 success:false,
                 error:{
-                    message:"please provide required fields"
+                    message:"please provide all required fields"
                 }
             })
         }
@@ -176,9 +176,17 @@ exports.updateCar = async (req,res) => {
                 }
             })
         }
+        if(!newCar.brand || !newCar.model || !newCar.year || !newCar.color || !newCar.price || !newCar.status){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"please provide all required fields"
+                }
+            })
+        }
 
         let car = await Car.findByPk(id);
-
         if(!car){
             return res.status(404).json({
                 status:404,
@@ -189,10 +197,24 @@ exports.updateCar = async (req,res) => {
             })
         }
 
+        car.brand = newCar.brand;
+        car.model = newCar.model;
+        car.year = newCar.year;
+        car.color = newCar.color;
+        car.status = newCar.status;
+        car.price = newCar.price;
 
+        car = await car.save();
+
+        res.status(201).json({
+            status:201,
+            success:true,
+            data:{
+                car:car
+            }
+        })
 
     }catch(error){
-        console.log(error)
         res.status(500).json({
             status:500,
             success:false,
