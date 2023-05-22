@@ -56,18 +56,17 @@ exports.login = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ userId: user.id }, secret, { expiresIn: jwtExpiration });
         //generate refToken
-        const refreshToken = jwt.sign({ userId: user.id }, secret, {
-            expiresIn: jwtRefreshExpiration,
-        });
+        // const refreshToken = jwt.sign({ userId: user.id }, secret, {
+        //     expiresIn: jwtRefreshExpiration,
+        // });
 
         let expiredAt = new Date();
         expiredAt.setSeconds(expiredAt.getSeconds() + jwtRefreshExpiration)
         await RefreshToken.create({
-            token: refreshToken,
+            token: token,
             userId: user.id,
             expiresAt: expiredAt.getTime()
         });
-
         res.status(200).json({
             success:true,
             data:{

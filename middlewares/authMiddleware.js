@@ -11,7 +11,9 @@ exports.protectRoute = async (req, res, next) => {
         token = token.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
-        const refreshToken = await RefreshToken.findOne({ where: { userId } });
+        // const refreshToken = await RefreshToken.findOne({ where: { userId } });
+        const refreshToken = await RefreshToken.findOne({ where: { token } });
+        console.log(refreshToken)
         if (!refreshToken || refreshToken.expiresAt < new Date()) {
             return res.status(401).json({  success:false,message: 'Unauthorized' });
         }
