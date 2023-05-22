@@ -4,24 +4,31 @@ const { Op } = require('sequelize');
 exports.findAllCars = async (req,res) =>{
     try{
         const query = req.query.q
-        const column = req.query.column
-        const validColumns = await Car.describe()
-        let cars;
-        if(query && column){
-            if(Object.keys(validColumns).includes(column)){
+        let cars =[];
+        if(query){
+            if(isNaN(query)){
                 cars = await Car.findAll({
-                    where: {
-                        [column]: {
-                            [Op.like]: `%${query}%`
-                        }
+                        where: {
+                            [Op.or]:[
+                                { brand: { [Op.like]: `%${query}%` } },
+                                { model: { [Op.like]: `%${query}%` } },
+                                { color: { [Op.like]: `%${query}%` } },
+                            ]
+                        },
                     }
-                })
+                )
             }
-            else {
-                return res.status(400).json({
-                    success:false,
-                    message: "the query column is not valid"
-                })
+            else{
+                cars = await Car.findAll({
+                        where: {
+                            [Op.or]:[
+                                { price: { [Op.like]: `%${query}%` } },
+                                { year: { [Op.like]: `%${query}%` } },
+                            ]
+                        },
+                    }
+                )
+
             }
         }
         else{
@@ -211,6 +218,51 @@ exports.updateCar = async (req,res) => {
             success:true,
             data:{
                 car:car
+            }
+        })
+
+    }catch(error){
+        res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
+
+exports.deleteCar = async (req,res)=>{
+    try{
+        const id = req.params.id
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no car id provided"
+                }
+            })
+        }
+        const car = await Car.findByPk(id);
+        if(!car){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'Car not found'
+                }
+            })
+        }
+        let test = await car.destroy();
+
+        res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                test:test,
+                car:car,
             }
         })
 
