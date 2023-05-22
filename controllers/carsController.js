@@ -1,4 +1,4 @@
-const {Car,Rental} = require('../models')
+const {Car,Rental,User} = require('../models')
 const { Op } = require('sequelize');
 
 exports.findAllCars = async (req,res) =>{
@@ -329,10 +329,8 @@ exports.setCarStatus = async (req,res)=>{
             });
         }
 
-        console.log(Boolean(Number(available)))
         car.status = Boolean(Number(available));
         await car.save()
-
         res.status(200).json({
             status:200,
             success:true,
@@ -340,6 +338,66 @@ exports.setCarStatus = async (req,res)=>{
             data:{
                 available:car.status,
                 car:car,
+            }
+        })
+
+    }catch(error){
+        res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
+
+exports.findCarRents = async (req,res) =>{
+    try{
+        const id = req.params.id
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no car id provided"
+                }
+            })
+        }
+        const car = await Car.findByPk(id);
+        if(!car){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'Car not found'
+                }
+            })
+        }
+
+        const rentals = await Rental.findAll({
+            where: { car_id: id },
+            include: [
+                {
+                    model: Car,
+                    as: 'Car',
+                    attributes: ['id', 'brand'],
+                },
+                {
+                    model: User,
+                    as: 'User',
+                    attributes: ['id', 'first_name', 'last_name'],
+                },
+            ],
+        });
+
+
+        res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                rentals:rentals,
             }
         })
 

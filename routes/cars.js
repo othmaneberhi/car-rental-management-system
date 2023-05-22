@@ -12,6 +12,7 @@ router.get('/:id',protectRoute,carsController.findCarById)
 router.put('/:id',protectRoute,carsController.updateCar)
 router.delete('/:id',protectRoute,carsController.deleteCar)
 router.put('/:id/status',protectRoute,carsController.setCarStatus)
+router.get('/:id/rents',protectRoute,carsController.findCarRents)
 
 
 module.exports = router;
