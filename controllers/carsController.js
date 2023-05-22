@@ -98,7 +98,6 @@ exports.findAvailableCars = async (req,res)=>{
             }
         })
     }catch(error){
-        console.log(error)
         res.status(500).json({
             status:500,
             success:false,
@@ -135,6 +134,15 @@ exports.findRentedCars = async (req,res) => {
 exports.addCar = async (req,res) => {
     try{
         let car = req.body;
+        if(!car.brand || !car.model || !car.year || !car.color || !car.price || !car.status){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"please provide required fields"
+                }
+            })
+        }
         car = await Car.create(car)
         res.status(201).json({
             status:201,
@@ -143,6 +151,46 @@ exports.addCar = async (req,res) => {
                 car:car
             }
         })
+    }catch(error){
+        res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
+
+exports.updateCar = async (req,res) => {
+    try{
+        const id = req.params.id
+        const newCar = req.body;
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no car id provided"
+                }
+            })
+        }
+
+        let car = await Car.findByPk(id);
+
+        if(!car){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'Car not found'
+                }
+            })
+        }
+
+
+
     }catch(error){
         console.log(error)
         res.status(500).json({
