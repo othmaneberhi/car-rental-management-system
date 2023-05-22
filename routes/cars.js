@@ -6,6 +6,7 @@ const {protectRoute} = require('../middlewares/authMiddleware')
 /* GET cars listing. */
 router.get('/',protectRoute,carsController.findAllCars)
 router.get('/available',protectRoute,carsController.findAvailableCars)
+router.get('/rented',protectRoute,carsController.findRentedCars)
 router.get('/:id',protectRoute,carsController.findCarById)
 
 
