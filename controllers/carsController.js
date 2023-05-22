@@ -34,13 +34,56 @@ exports.findAllCars = async (req,res) =>{
             success:true,
         })
     }catch(error){
-        console.log(error)
         res.status(500).json({
             error:{
-                code:'INTERNAL_SERVER_ERROR',
-                message:'An internal server error occurred'
+                status:500,
+                code:error.code,
+                message:error.message
             },
             success:false,
+        })
+    }
+}
+
+exports.findCarById = async (req,res)=>{
+    try{
+        const id = req.params.id
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no car id provided"
+                }
+            })
+        }
+        const car = await Car.findByPk(id);
+        if(!car){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'Car not found'
+                }
+            })
+        }
+        res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                car:car,
+            }
+        })
+
+    }catch(error){
+        console.log(error)
+        res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
         })
     }
 }
