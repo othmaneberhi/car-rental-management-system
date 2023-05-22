@@ -29,7 +29,6 @@ exports.register = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
@@ -76,7 +75,6 @@ exports.login = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error(error);
         res.status(500).json({
             success:false,
             message: 'Internal server error' });
@@ -85,16 +83,15 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try{
-        const refreshToken = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
-        await RefreshToken.destroy({where:{userid:userId}})
+        await token.destroy({where:{userid:userId}})
         res.status(200).json({
             success:true,
             message: 'Logout successful'
         });
     } catch (error) {
-        console.error(error);
         res.status(500).json({
             success:false,
             message: 'Logout failed'

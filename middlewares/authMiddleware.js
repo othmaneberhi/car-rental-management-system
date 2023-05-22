@@ -13,12 +13,10 @@ exports.protectRoute = async (req, res, next) => {
         const userId = decoded.userId;
         // const refreshToken = await RefreshToken.findOne({ where: { userId } });
         const refreshToken = await RefreshToken.findOne({ where: { token } });
-        console.log(refreshToken)
         if (!refreshToken || refreshToken.expiresAt < new Date()) {
             return res.status(401).json({  success:false,message: 'Unauthorized' });
         }
         req.token = token;
-        console.log("toook: "+req.token)
         next();
     } catch (error) {
         return res.status(401).json({
@@ -29,7 +27,7 @@ exports.protectRoute = async (req, res, next) => {
 
 exports.isLoggedIn = (req, res, next) => {
     // Check if user is authenticated ?
-    console.log(req.token)
+    // console.log(req.token)
     if (req.token) {
         return res.status(403).json({ message: 'Already logged in' });
     }
