@@ -275,6 +275,16 @@ exports.addRental = async (req,res)=>{
             });
         }
 
+        if(!car.status){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message: 'the car is not available'
+                },
+            });
+        }
+
         if (rental.start_date >= rental.end_date) {
             return res.status(400).json({
                 status:400,
@@ -286,6 +296,8 @@ exports.addRental = async (req,res)=>{
         }
 
         rental = await Rental.create(rental)
+        car.status=0
+        await car.save()
         return res.status(201).json({
             status:201,
             success:true,
