@@ -153,10 +153,6 @@ exports.findCompletedRentals = async (req,res)=>{
     }
 }
 
-exports.addRental = async (req,res)=>{
-
-}
-
 exports.setStatus = async (req,res)=>{
     try{
 
@@ -222,6 +218,71 @@ exports.setStatus = async (req,res)=>{
             }
         })
 
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
+
+exports.addRental = async (req,res)=>{
+    try{
+        let rental = req.body;
+        if(!rental.car_id || !rental.user_id || !rental.start_date || !rental.end_date || !rental.status){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"please provide all required fields"
+                }
+            })
+        }
+        const car = await Car.findByPk(rental.car_id);
+        const user = await User.findByPk(rental.user_id);
+
+        if (!car) {
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message: 'Car not found.'
+                },
+
+            });
+        }
+        if (!user) {
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message: 'User not found.'
+                },
+            });
+        }
+
+        if (rental.start_date >= rental.end_date) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message: 'Start date should be less than end date'
+                },
+            });
+        }
+
+        rental = await Rental.create(rental)
+        return res.status(201).json({
+            status:201,
+            success:true,
+            data:{
+                rental:rental
+            }
+        })
     }catch(error){
         return res.status(500).json({
             status:500,
