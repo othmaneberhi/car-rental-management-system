@@ -36,7 +36,9 @@ exports.findAllCars = async (req,res) =>{
         }
         return res.status(200).json({
             status:200,
-            data:cars,
+            data:{
+                cars:cars
+            },
             message: "Cars retrieved successfully",
             success:true,
         })

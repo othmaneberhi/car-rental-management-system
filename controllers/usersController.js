@@ -9,7 +9,6 @@ exports.findAllUsers = async (req,res) =>{
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phoneRegex = /^06\d{8}$/;
             if(emailRegex.test(query)){
-                console.log('q email')
                 users = await User.findAll({
                         where: {
                             email: { [Op.like]: `%${query}%`}
@@ -44,7 +43,9 @@ exports.findAllUsers = async (req,res) =>{
         }
         return res.status(200).json({
             status:200,
-            data:users,
+            data:{
+                users:users
+            },
             message: "Users retrieved successfully",
             success:true,
         })
