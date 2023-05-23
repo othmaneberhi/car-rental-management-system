@@ -1,5 +1,6 @@
 'use strict';
 const faker = require('faker')
+const {User,Car} = require("../models");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
@@ -12,13 +13,18 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    const users = await User.findAll({ attributes: ['id'] });
+    const userIds = users.map(user => user.id);
+
+    const cars = await Car.findAll({ attributes: ['id'] });
+    const carIds = cars.map(car => car.id);
+
     const rentalsData = [];
-//
-// Generate 20 rentals
-    for (let i = 0; i < 12; i++) {
+
+    for (let i = 0; i < 15; i++) {
       const rental = {
-        user_id: faker.datatype.number({ min: 1, max: 20 }),
-        car_id: faker.datatype.number({ min: 21, max: 39 }),
+        user_id: userIds[i],
+        car_id: carIds[i],
         start_date: faker.date.past(),
         end_date: faker.date.future(),
         status: faker.random.arrayElement(['pending', 'completed']),
@@ -29,7 +35,7 @@ module.exports = {
       rentalsData.push(rental);
     }
 
-    await queryInterface.bulkInsert('Rentals', rentalsData, {});
+    //await queryInterface.bulkInsert('Rentals', rentalsData, {});
 
 
   },

@@ -1,6 +1,9 @@
 'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
+const {User} = require('../models');
+const faker = require('faker');
+const bcrypt = require("bcryptjs");
+
 module.exports = {
   async up (queryInterface, Sequelize) {
     /**
@@ -13,24 +16,31 @@ module.exports = {
      * }], {});
     */
 
-    const faker = require('faker');
+    const users = await User.findAll({ attributes: ['id'] });
+    const userIds = users.map(user => user.id);
 
-//     const accountsData = [];
-//
-// // Generate 20 accounts
-//     for (let i = 0; i < 20; i++) {
-//       const account = {
-//         user_id: i + 1,
-//         password: faker.internet.password(),
-//         isAdmin: i===0,//admin is the first account
-//         createdAt: faker.date.past(),
-//         updatedAt: faker.date.recent(),
-//       };
-//
-//       accountsData.push(account);
-//     }
-//
-//     await queryInterface.bulkInsert('Accounts', accountsData, {});
+    const adminUser = await User.findOne({where:{
+      email:'admin@gmail.com'
+    }})
+
+    const accountsData = [];
+
+
+    for (let i = 0; i < userIds.length; i++) {
+      const account = {
+        user_id: userIds[i],
+        password: faker.internet.password(),
+        isAdmin: userIds[i]===adminUser.id,
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.recent(),
+      };
+
+      accountsData.push(account);
+    }
+
+
+
+    //await queryInterface.bulkInsert('Accounts', accountsData, {});
 
 
   },
