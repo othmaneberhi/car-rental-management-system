@@ -73,6 +73,16 @@ exports.findUserById = async (req,res)=>{
                 }
             })
         }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
         const user = await User.findByPk(id);
         if(!user){
             return res.status(404).json({
@@ -112,6 +122,16 @@ exports.deleteUser = async (req,res)=>{
                 success:false,
                 error:{
                     message:"no user id provided"
+                }
+            })
+        }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
                 }
             })
         }
@@ -180,6 +200,16 @@ exports.findUserRents = async (req,res) =>{
                 }
             })
         }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
         const user = await User.findByPk(id);
         if(!user){
             return res.status(404).json({
@@ -238,6 +268,16 @@ exports.updateUser = async (req,res) => {
                 success:false,
                 error:{
                     message:"no user id provided"
+                }
+            })
+        }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
                 }
             })
         }

@@ -66,6 +66,16 @@ exports.findCarById = async (req,res)=>{
                 }
             })
         }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
         const car = await Car.findByPk(id);
         if(!car){
             return res.status(404).json({
@@ -185,6 +195,16 @@ exports.updateCar = async (req,res) => {
                 }
             })
         }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
         if(!newCar.brand || !newCar.model || !newCar.year || !newCar.color || !newCar.price || !newCar.status){
             return res.status(400).json({
                 status:400,
@@ -247,6 +267,16 @@ exports.deleteCar = async (req,res)=>{
                 }
             })
         }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
         let car = await Car.findByPk(id,{
             include:Rental,
         });
@@ -300,7 +330,16 @@ exports.setCarStatus = async (req,res)=>{
                 }
             })
         }
-
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
         const car = await Car.findByPk(id);
         if(!car){
             return res.status(404).json({
