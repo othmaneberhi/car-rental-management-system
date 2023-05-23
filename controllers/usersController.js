@@ -1,4 +1,4 @@
-const {User, Car} = require('../models')
+const {User, Account, Rental, Car} = require('../models')
 const { Op } = require('sequelize');
 
 exports.findAllUsers = async (req,res) =>{
@@ -9,6 +9,7 @@ exports.findAllUsers = async (req,res) =>{
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phoneRegex = /^06\d{8}$/;
             if(emailRegex.test(query)){
+                console.log('q email')
                 users = await User.findAll({
                         where: {
                             email: { [Op.like]: `%${query}%`}
@@ -16,7 +17,7 @@ exports.findAllUsers = async (req,res) =>{
                     }
                 )
             }
-            if(phoneRegex.test(query)){
+            else if(phoneRegex.test(query)){
                 users = await User.findAll({
                         where: {
                             phone: { [Op.like]: `%${query}%`}
@@ -41,14 +42,14 @@ exports.findAllUsers = async (req,res) =>{
         else{
             users = await User.findAll();
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             data:users,
             message: "Users retrieved successfully",
             success:true,
         })
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             error:{
                 status:500,
                 code:error.code,
@@ -81,9 +82,74 @@ exports.findUserById = async (req,res)=>{
                 }
             })
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
+            data:{
+                user:user,
+            }
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
+
+exports.deleteUser = async (req,res)=>{
+    try{
+        const id = req.params.id;
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no user id provided"
+                }
+            })
+        }
+        let user = await User.findByPk(id,{
+            include: [
+                {
+                    model: Account,
+                    as: 'Account',
+                    attributes: ['id'],
+                },
+                {
+                    model: Rental,
+                    as: 'Rentals',
+                    attributes: ['id'],
+                },
+            ],
+        });
+        if(!user){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'User not found'
+                }
+            })
+        }
+
+        await Rental.destroy({where:{
+                user_id:user.id
+            }})
+        await Account.destroy({where:{
+                user_id:user.id
+            }})
+        user = await user.destroy();
+
+        return res.status(200).json({
+            status:200,
+            success:true,
+            message:"User and associated rentals deleted successfully",
             data:{
                 user:user,
             }
@@ -100,34 +166,135 @@ exports.findUserById = async (req,res)=>{
         })
     }
 }
-// exports.addUser = async (req,res) => {
-//     try{
-//         let user = req.body;
-//         if(!user.first_name || !user.last_name || !user.email || !user.password || !user.phone || !user.status){
-//             return res.status(400).json({
-//                 status:400,
-//                 success:false,
-//                 error:{
-//                     message:"please provide all required fields"
-//                 }
-//             })
-//         }
-//         user = await User.create(user)
-//         res.status(201).json({
-//             status:201,
-//             success:true,
-//             data:{
-//                 car:user
-//             }
-//         })
-//     }catch(error){
-//         res.status(500).json({
-//             status:500,
-//             success:false,
-//             error:{
-//                 code:error.code,
-//                 message:error.message
-//             },
-//         })
-//     }
-// }
+
+exports.findUserRents = async (req,res) =>{
+    try{
+        const id = req.params.id
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no user id provided"
+                }
+            })
+        }
+        const user = await User.findByPk(id);
+        if(!user){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'User not found'
+                }
+            })
+        }
+
+        const rentals = await Rental.findAll({
+            where: { user_id: id },
+            include: [
+                {
+                    model: Car,
+                    as: 'Car',
+                    attributes: ['id', 'brand'],
+                },
+                {
+                    model: User,
+                    as: 'User',
+                    attributes: ['id', 'first_name', 'last_name'],
+                },
+            ],
+        });
+
+
+        return res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                rentals:rentals,
+            }
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}
+
+exports.updateUser = async (req,res) => {
+    try{
+        const id = req.params.id
+        const newUser = req.body;
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no user id provided"
+                }
+            })
+        }
+        if(!newUser.first_name || !newUser.last_name || !newUser.email || !newUser.address || !newUser.phone){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"please provide all required fields"
+                }
+            })
+        }
+
+        let user = await User.findByPk(id);
+        if(!user){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'User not found'
+                }
+            })
+        }
+
+        // Check if user with the same email already exists
+        const existingUser = await User.findOne({
+            paranoid: false,
+            where: { email:newUser.email }
+        });
+        if (existingUser && existingUser.id!==user.id ) {
+            return res.status(409).json({ message: 'User with this email already exists' });
+        }
+
+
+        user.first_name = newUser.first_name;
+        user.last_name = newUser.last_name;
+        user.address = newUser.address;
+        user.email = newUser.email;
+        user.phone = newUser.phone;
+
+        user = await user.save();
+
+        return res.status(201).json({
+            status:201,
+            success:true,
+            data:{
+                user:user
+            }
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
+}

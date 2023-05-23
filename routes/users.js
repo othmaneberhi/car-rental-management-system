@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const usersController = require("../controllers/usersController")
+const {protectRoute} = require('../middlewares/authMiddleware')
 
-// // Route for user login
-// router.post('/login', UserController.login);
-//
-// // Route for updating user profile
-// router.put('/profile', UserController.updateProfile);
-//
-// // Route for changing password
-// router.put('/password', UserController.changePassword);
-//
-// // Route for deleting user account
-// router.delete('/account', UserController.deleteAccount);
+router.get('/',protectRoute,usersController.findAllUsers) // /api/v1/customers/
+router.get('/:id',protectRoute,usersController.findUserById) // /api/v1/customers/{id}
+router.delete('/:id',protectRoute,usersController.deleteUser) // /api/v1/customers/{id}
+router.put('/:id',protectRoute,usersController.updateUser) // /api/v1/customers/{id}
+router.get('/:id/rents',protectRoute,usersController.findUserRents) // /api/v1/customers/{id}/rents
+
 
 // Export the router
 module.exports = router;
