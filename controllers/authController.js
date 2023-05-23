@@ -121,3 +121,54 @@ exports.logout = async (req, res) => {
         });
     }
 };
+
+exports.getLoggedInUser = async (req,res) => {
+    try{
+        let token = req.headers.authorization;
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        token = token.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const refreshToken = await RefreshToken.findOne({ where: { token } });
+        if (!refreshToken) {
+            return res.status(401).json({  status:401, success:false,message: 'Unauthorized' });
+        }
+        if (refreshToken.expiresAt < new Date()) {
+            return res.status(400).json({  status:400,success:false,message: 'Token expired' });
+        }
+        const userId = decoded.userId;
+        const user = await User.findByPk(userId,{
+            include:[
+                {
+                    model:Account,
+                    attributes:['isAdmin']
+                }
+            ]
+        })
+        if(!user){
+            return res.status(404).json({ status:404,success:false,message: 'User not found' });
+        }
+        return res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                user:user
+            }
+        });
+
+
+
+    }catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                error:error.code,
+                message:error.message
+            }
+        });
+    }
+}
