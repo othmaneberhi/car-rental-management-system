@@ -242,6 +242,16 @@ exports.addRental = async (req,res)=>{
                 }
             })
         }
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        if(!regex.test(rental.start_date) || !regex.test(rental.end_date)){
+            return res.status(400).json({
+                error:{
+                    status:400,
+                    message:"invalid date format (expected: yyy-mm-dd)"
+                },
+                success:false,
+            })
+        }
         const car = await Car.findByPk(rental.car_id);
         const user = await User.findByPk(rental.user_id);
 
