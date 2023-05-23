@@ -34,14 +34,14 @@ exports.findAllCars = async (req,res) =>{
         else{
             cars = await Car.findAll();
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             data:cars,
             message: "Cars retrieved successfully",
             success:true,
         })
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             error:{
                 status:500,
                 code:error.code,
@@ -74,7 +74,7 @@ exports.findCarById = async (req,res)=>{
                 }
             })
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             data:{
@@ -83,7 +83,7 @@ exports.findCarById = async (req,res)=>{
         })
 
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -97,7 +97,7 @@ exports.findCarById = async (req,res)=>{
 exports.findAvailableCars = async (req,res)=>{
     try{
         const cars = await Car.findAll({where:{status:1}})
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             data:{
@@ -105,7 +105,7 @@ exports.findAvailableCars = async (req,res)=>{
             }
         })
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -119,7 +119,7 @@ exports.findAvailableCars = async (req,res)=>{
 exports.findRentedCars = async (req,res) => {
     try{
         const cars = await Car.findAll({where:{status:0}})
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             data:{
@@ -127,7 +127,7 @@ exports.findRentedCars = async (req,res) => {
             }
         })
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -151,7 +151,7 @@ exports.addCar = async (req,res) => {
             })
         }
         car = await Car.create(car)
-        res.status(201).json({
+        return res.status(201).json({
             status:201,
             success:true,
             data:{
@@ -159,7 +159,7 @@ exports.addCar = async (req,res) => {
             }
         })
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -213,7 +213,7 @@ exports.updateCar = async (req,res) => {
 
         car = await car.save();
 
-        res.status(201).json({
+        return res.status(201).json({
             status:201,
             success:true,
             data:{
@@ -222,7 +222,7 @@ exports.updateCar = async (req,res) => {
         })
 
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -262,7 +262,7 @@ exports.deleteCar = async (req,res)=>{
             }})
         car = await car.destroy();
 
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             message:"Car and associated rentals deleted successfully",
@@ -273,7 +273,7 @@ exports.deleteCar = async (req,res)=>{
         })
 
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -331,7 +331,7 @@ exports.setCarStatus = async (req,res)=>{
 
         car.status = Boolean(Number(available));
         await car.save()
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             message:"Car availability updated successfully",
@@ -342,7 +342,7 @@ exports.setCarStatus = async (req,res)=>{
         })
 
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -393,7 +393,7 @@ exports.findCarRents = async (req,res) =>{
         });
 
 
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             data:{
@@ -402,7 +402,7 @@ exports.findCarRents = async (req,res) =>{
         })
 
     }catch(error){
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{

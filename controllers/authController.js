@@ -11,7 +11,7 @@ exports.register = async (req, res) => {
             return res.status(500).json({ message: 'pleas provide required fields' });
         }
         // Check if user with the same email already exists
-        const existingUser = await User.findOne({ where: { email } });
+        const existingUser = await User.findOne({ paranoid: false,where: { email } });
         if (existingUser) {
             return res.status(409).json({ message: 'User with this email already exists' });
         }
