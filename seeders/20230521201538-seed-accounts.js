@@ -29,7 +29,7 @@ module.exports = {
     for (let i = 0; i < userIds.length; i++) {
       const account = {
         user_id: userIds[i],
-        password: faker.internet.password(),
+        password: await bcrypt.hash('1234', 10),
         isAdmin: userIds[i]===adminUser.id,
         createdAt: faker.date.past(),
         updatedAt: faker.date.recent(),
