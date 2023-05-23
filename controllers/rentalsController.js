@@ -59,12 +59,23 @@ exports.findAllRentals = async (req,res)=>{
 exports.findRentalById = async (req,res)=>{
     try{
         const id = req.params.id
+
         if(!id){
             return res.status(400).json({
                 status:400,
                 success:false,
                 error:{
                     message:"no rental id provided"
+                }
+            })
+        }
+        // Check if id is a number
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
                 }
             })
         }
@@ -99,11 +110,47 @@ exports.findRentalById = async (req,res)=>{
 }
 
 exports.findPendingRentals = async (req,res)=>{
-
+    try{
+        const rentals = await Rental.findAll({where:{status:'pending'}})
+        return res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                rentals:rentals
+            }
+        })
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
 }
 
-exports.findConfirmedRentals = async (req,res)=>{
-
+exports.findCompletedRentals = async (req,res)=>{
+    try{
+        const rentals = await Rental.findAll({where:{status:'completed'}})
+        return res.status(200).json({
+            status:200,
+            success:true,
+            data:{
+                rentals:rentals
+            }
+        })
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
 }
 
 exports.addRental = async (req,res)=>{
