@@ -8,7 +8,7 @@ exports.register = async (req, res) => {
     try {
         const { first_name, last_name, phone, address, email, password } = req.body;
         if(!first_name || !last_name || !phone || !address ||!email || !password){
-            res.status(500).json({ message: 'pleas provide required fields' });
+            return res.status(500).json({ message: 'pleas provide required fields' });
         }
         // Check if user with the same email already exists
         const existingUser = await User.findOne({ where: { email } });
@@ -22,14 +22,15 @@ exports.register = async (req, res) => {
         // Create associated account
         await Account.create({ user_id: newUser.id, password: hashedPassword });
 
-        res.status(201).json({
+        return res.status(201).json({
             success:true,
             data:{
                 user:newUser
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        console.log(error)
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -38,7 +39,7 @@ exports.login = async (req, res) => {
         const { email, password } = req.body;
 
         if(!email || !password){
-            res.status(500).json({ message: 'pleas provide required fields' });
+            return res.status(500).json({ message: 'pleas provide required fields' });
         }
 
         // Find the user with the provided email
@@ -66,7 +67,7 @@ exports.login = async (req, res) => {
             userId: user.id,
             expiresAt: expiredAt.getTime()
         });
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             data:{
@@ -76,7 +77,7 @@ exports.login = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{
@@ -94,14 +95,14 @@ exports.logout = async (req, res) => {
         const userId = decoded.userId;
 
         await RefreshToken.destroy({where:{userid:userId}})
-        res.status(200).json({
+        return res.status(200).json({
             status:200,
             success:true,
             message: 'Logout successful'
         });
     } catch (error) {
         console.log(error)
-        res.status(500).json({
+        return res.status(500).json({
             status:500,
             success:false,
             error:{

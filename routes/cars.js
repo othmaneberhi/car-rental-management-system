@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var carsController = require("../controllers/carsController")
+const express = require('express');
+const router = express.Router();
+const carsController = require("../controllers/carsController")
 const {protectRoute} = require('../middlewares/authMiddleware')
 
 /* GET cars listing. */
