@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const rentalsController = require("../controllers/rentalsController")
-const {protectRoute} = require('../middlewares/authMiddleware')
+const rentalsController = require("../../../controllers/rentalsController")
+const {protectRoute} = require('../../../middlewares/authMiddleware')
 
 router.get('/',protectRoute,rentalsController.findAllRentals) // /api/v1/rentals?q=(optional)
 router.post('/',protectRoute,rentalsController.addRental) // /api/v1/rentals

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const usersController = require("../controllers/usersController")
-const {protectRoute} = require('../middlewares/authMiddleware')
+const usersController = require("../../../controllers/usersController")
+const {protectRoute} = require('../../../middlewares/authMiddleware')
 
 router.get('/',protectRoute,usersController.findAllUsers) // /api/v1/customers/
 router.get('/:id',protectRoute,usersController.findUserById) // /api/v1/customers/{id}

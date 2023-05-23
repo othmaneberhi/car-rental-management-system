@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const carsController = require("../controllers/carsController")
-const {protectRoute} = require('../middlewares/authMiddleware')
+const carsController = require("../../../controllers/carsController")
+const {protectRoute} = require('../../../middlewares/authMiddleware')
 
 router.get('/',protectRoute,carsController.findAllCars) // /api/v1/cars
 router.post('/',protectRoute,carsController.addCar) // /api/v1/cars

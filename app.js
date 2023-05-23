@@ -6,13 +6,14 @@ let logger = require('morgan');
 const multer = require('multer')
 
 
-let indexRouter = require('./routes/index');
-let authRouter = require('./routes/auth');
-let carsRouter = require('./routes/cars');
-let usersRouter = require('./routes/users');
-let rentalsRouter = require('./routes/rentals');
-let earningsRouter = require('./routes/earnings');
+// let indexRouter = require('./routes/api/v1');
+// let authRouter = require('./routes/api/v1/auth');
+// let carsRouter = require('./routes/api/v1/cars');
+// let usersRouter = require('./routes/api/v1/users');
+// let rentalsRouter = require('./routes/api/v1/rentals');
+// let earningsRouter = require('./routes/api/v1/earnings');
 
+let mainRouter = require('./routes/api/v1/main');
 
 
 let app = express();
@@ -29,12 +30,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/', indexRouter);
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/cars', carsRouter);
-app.use('/api/v1/customers', usersRouter);
-app.use('/api/v1/rentals', rentalsRouter);
-app.use('/api/v1/earnings',earningsRouter)
+// app.use('/', indexRouter);
+// app.use('/api/v1/auth', authRouter);
+// app.use('/api/v1/cars', carsRouter);
+// app.use('/api/v1/customers', usersRouter);
+// app.use('/api/v1/rentals', rentalsRouter);
+// app.use('/api/v1/earnings',earningsRouter)
+
+app.use('/api/v1/',mainRouter)
 
 
 // catch 404 and forward to error handler
