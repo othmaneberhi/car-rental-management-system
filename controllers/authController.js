@@ -43,7 +43,16 @@ exports.login = async (req, res) => {
         }
 
         // Find the user with the provided email
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({ where: { email },
+            include: [
+                {
+                    model: Account,
+                    as: 'Account',
+                    attributes: ['isAdmin'],
+                },
+            ],
+        });
+
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
