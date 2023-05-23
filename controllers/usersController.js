@@ -6,25 +6,9 @@ exports.findAllUsers = async (req,res) =>{
         const query = req.query.q
         let users =[];
         if(query){
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const phoneRegex = /^06\d{8}$/;
-            if(emailRegex.test(query)){
-                users = await User.findAll({
-                    include:{
-                        model:Account,
-                        attributes:[],
-                        where:{
-                            isAdmin:false,
-                        }
-                    },
-                        where: {
-                            email: { [Op.like]: `%${query}%`}
-                        },
-                    order: [['id', 'DESC']],
-                    }
-                )
-            }
-            else if(phoneRegex.test(query)){
+
+            if((/^\d+$/).test(query)){
                 users = await User.findAll({
                     include:{
                         model:Account,
@@ -53,6 +37,7 @@ exports.findAllUsers = async (req,res) =>{
                             [Op.or]:[
                                 { first_name: { [Op.like]: `%${query}%` } },
                                 { last_name: { [Op.like]: `%${query}%` } },
+                                { email: { [Op.like]: `%${query}%`}}
                             ]
                         },
                     order: [['id', 'DESC']],

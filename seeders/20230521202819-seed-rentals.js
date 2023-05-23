@@ -37,7 +37,7 @@ module.exports = {
       rentalsData.push(rental);
     }
 
-    await queryInterface.bulkInsert('Rentals', rentalsData, {});
+    //await queryInterface.bulkInsert('Rentals', rentalsData, {});
 
 
   },

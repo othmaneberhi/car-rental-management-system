@@ -16,27 +16,27 @@ module.exports = {
      * }], {});
     */
 
-    // const users = await User.findAll({ attributes: ['id'] });
-    // const userIds = users.map(user => user.id);
-    //
-    // const adminUser = await User.findOne({where:{
-    //   email:'admin@gmail.com'
-    // }})
-    //
-    // const accountsData = [];
-    //
-    //
-    // for (let i = 0; i < userIds.length; i++) {
-    //   const account = {
-    //     user_id: userIds[i],
-    //     password: await bcrypt.hash('1234', 10),
-    //     isAdmin: userIds[i]===adminUser.id,
-    //     createdAt: faker.date.past(),
-    //     updatedAt: faker.date.recent(),
-    //   };
-    //
-    //   accountsData.push(account);
-    // }
+    const users = await User.findAll({ attributes: ['id'] });
+    const userIds = users.map(user => user.id);
+
+    const adminUser = await User.findOne({where:{
+      email:'admin@gmail.com'
+    }})
+
+    const accountsData = [];
+
+
+    for (let i = 0; i < userIds.length; i++) {
+      const account = {
+        user_id: userIds[i],
+        password: await bcrypt.hash('1234', 10),
+        isAdmin: userIds[i]===adminUser.id,
+        createdAt: faker.date.past(),
+        updatedAt: faker.date.recent(),
+      };
+
+      accountsData.push(account);
+    }
 
 
 

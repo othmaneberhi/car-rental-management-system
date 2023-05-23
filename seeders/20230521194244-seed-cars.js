@@ -31,7 +31,7 @@ module.exports = {
       carsData.push(car);
     }
 
-    await queryInterface.bulkInsert('Cars', carsData, {});
+    //await queryInterface.bulkInsert('Cars', carsData, {});
 
   },
 
