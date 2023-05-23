@@ -153,7 +153,7 @@ exports.findRentedCars = async (req,res) => {
 exports.addCar = async (req,res) => {
     try{
         let car = req.body;
-        if(!car.brand || !car.model || !car.year || !car.color || !car.price || !car.status){
+        if(!car.brand || !car.model || !car.year || !car.color || !car.price || !req.body.hasOwnProperty('status') || !(typeof car.status === 'boolean')){
             return res.status(400).json({
                 status:400,
                 success:false,
@@ -205,7 +205,7 @@ exports.updateCar = async (req,res) => {
                 }
             })
         }
-        if(!newCar.brand || !newCar.model || !newCar.year || !newCar.color || !newCar.price || !newCar.status){
+        if(!newCar.brand || !newCar.model || !newCar.year || !newCar.color || !newCar.price || !req.body.hasOwnProperty('status') || !(typeof newCar.status === 'boolean')){
             return res.status(400).json({
                 status:400,
                 success:false,
