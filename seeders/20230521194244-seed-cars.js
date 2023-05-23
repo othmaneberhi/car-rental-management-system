@@ -21,7 +21,7 @@ module.exports = {
         model: faker.vehicle.model(),
         year: faker.datatype.number({ min: 2000, max: 2023 }),
         color: faker.vehicle.color(),
-        price: faker.datatype.number({ min: 10000, max: 50000 }),
+        price: faker.datatype.number({ min: 100, max: 2000 }),
         status: faker.datatype.boolean(),
         picture:faker.image.imageUrl(),
         createdAt: faker.date.past(),
@@ -31,8 +31,7 @@ module.exports = {
       carsData.push(car);
     }
 
-
-    //await queryInterface.bulkInsert('Cars', carsData, {});
+    await queryInterface.bulkInsert('Cars', carsData, {});
 
   },
 

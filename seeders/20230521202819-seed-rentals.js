@@ -13,6 +13,8 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    faker.date.format = 'YYYY-MM-DD'
+
     const users = await User.findAll({ attributes: ['id'] });
     const userIds = users.map(user => user.id);
 
@@ -35,7 +37,7 @@ module.exports = {
       rentalsData.push(rental);
     }
 
-    //await queryInterface.bulkInsert('Rentals', rentalsData, {});
+    await queryInterface.bulkInsert('Rentals', rentalsData, {});
 
 
   },
