@@ -4,36 +4,105 @@ const { Op } = require('sequelize');
 exports.findAllCars = async (req,res) =>{
     try{
         const query = req.query.q
-        let cars =[];
-        if(query){
-            if(isNaN(query)){
-                cars = await Car.findAll({
-                        where: {
-                            [Op.or]:[
-                                { brand: { [Op.like]: `%${query}%` } },
-                                { model: { [Op.like]: `%${query}%` } },
-                                { color: { [Op.like]: `%${query}%` } },
-                            ]
-                        },
-                    }
-                )
-            }
-            else{
-                cars = await Car.findAll({
-                        where: {
-                            [Op.or]:[
-                                { price: { [Op.like]: `%${query}%` } },
-                                { year: { [Op.like]: `%${query}%` } },
-                            ]
-                        },
-                    }
-                )
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
 
+        let cars =[];
+        if(minPrice && maxPrice && query){
+            if(isNaN(maxPrice) || isNaN(minPrice)){
+                return res.status(400).json({
+                    error:{
+                        status:400,
+                        success:false,
+                        error:{
+                            message:'invalid prices format (expected: Number)'
+                        }
+                    },
+                    success:false,
+                })
             }
+
+            if (parseInt(minPrice)  > parseInt(maxPrice)) {
+                return res.status(400).json({
+                    status:400,
+                    success:false,
+                    error:{
+                        message: 'Min price should be less than max price'
+                    },
+                });
+            }
+            cars = await Car.findAll({
+                    where: {
+                        [Op.and]:[
+                            { [Op.or]:[
+                                    { brand: { [Op.like]: `%${query}%` } },
+                                    { model: { [Op.like]: `%${query}%` } },
+                                    { color: { [Op.like]: `%${query}%` } },
+                                    { price: { [Op.like]: `%${query}%` } },
+                                    { year: { [Op.like]: `%${query}%` } },
+
+                                ]
+                            },
+                            { price:{[Op.between]: [minPrice,maxPrice]}}
+                        ]
+
+                    },
+                }
+            )
         }
+        else if(minPrice && maxPrice){
+            if(isNaN(maxPrice) || isNaN(minPrice)){
+                return res.status(400).json({
+                    error:{
+                        status:400,
+                        success:false,
+                        error:{
+                            message:'invalid prices format (expected: Number)'
+                        }
+                    },
+                    success:false,
+                })
+            }
+
+            if (parseInt(minPrice)  > parseInt(maxPrice)){
+                return res.status(400).json({
+                    status:400,
+                    success:false,
+                    error:{
+                        message: 'Min price should be less than max price'
+                    },
+                });
+            }
+
+            cars = await Car.findAll({
+                    where: {
+                        price:{[Op.between]: [minPrice,maxPrice]}
+                    },
+                }
+            )
+
+
+        }
+        else if(query){
+            cars = await Car.findAll({
+                    where: {
+                        [Op.or]:[
+                            { brand: { [Op.like]: `%${query}%` } },
+                            { model: { [Op.like]: `%${query}%` } },
+                            { color: { [Op.like]: `%${query}%` } },
+                            { price: { [Op.like]: `%${query}%` } },
+                            { year: { [Op.like]: `%${query}%` } },
+                        ]
+                    },
+                }
+            )
+        }
+
+
         else{
             cars = await Car.findAll();
         }
+
         return res.status(200).json({
             status:200,
             data:{

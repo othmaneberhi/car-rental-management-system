@@ -19,7 +19,7 @@ exports.protectRoute = async (req, res, next) => {
         req.token = token;
         next();
     } catch (error) {
-        return res.status(401).json({
+        return res.status(500).json({
             success:false,
             message: error.message });
     }
@@ -27,9 +27,9 @@ exports.protectRoute = async (req, res, next) => {
 
 exports.isLoggedIn = (req, res, next) => {
     // Check if user is authenticated
-    if (req.headers.authorization) {
-        return res.status(403).json({ message: 'Already logged in' });
-    }
+    // if (req.headers.authorization) {
+    //     return res.status(403).json({ message: 'Already logged in' });
+    // }
     next();
 };
 
