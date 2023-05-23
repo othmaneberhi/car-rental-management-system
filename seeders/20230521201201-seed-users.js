@@ -20,7 +20,7 @@ module.exports = {
       const user = {
         first_name: faker.name.firstName(),
         last_name: faker.name.lastName(),
-        phone: faker.phone.phoneNumber(),
+        phone: faker.phone.phoneNumber('06########'),
         email: faker.internet.email(),
         address: faker.address.streetAddress(),
         createdAt: faker.date.past(),
