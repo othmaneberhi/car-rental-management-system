@@ -11,6 +11,8 @@ let authRouter = require('./routes/auth');
 let carsRouter = require('./routes/cars');
 let usersRouter = require('./routes/users');
 let rentalsRouter = require('./routes/rentals');
+let earningsRouter = require('./routes/earnings');
+
 
 
 let app = express();
@@ -32,6 +34,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/cars', carsRouter);
 app.use('/api/v1/customers', usersRouter);
 app.use('/api/v1/rentals', rentalsRouter);
+app.use('/api/v1/earnings',earningsRouter)
 
 
 // catch 404 and forward to error handler
