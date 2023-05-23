@@ -20,6 +20,7 @@ exports.findAllUsers = async (req,res) =>{
                         where: {
                             email: { [Op.like]: `%${query}%`}
                         },
+                    order: [['id', 'DESC']],
                     }
                 )
             }
@@ -35,6 +36,7 @@ exports.findAllUsers = async (req,res) =>{
                         where: {
                             phone: { [Op.like]: `%${query}%`}
                         },
+                    order: [['id', 'DESC']],
                     }
                 )
             }
@@ -53,6 +55,7 @@ exports.findAllUsers = async (req,res) =>{
                                 { last_name: { [Op.like]: `%${query}%` } },
                             ]
                         },
+                    order: [['id', 'DESC']],
                     }
                 )
             }
@@ -68,6 +71,7 @@ exports.findAllUsers = async (req,res) =>{
                         isAdmin:false,
                     }
                 },
+                order: [['id', 'DESC']],
             });
         }
         return res.status(200).json({

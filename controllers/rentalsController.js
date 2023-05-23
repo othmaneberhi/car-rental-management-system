@@ -21,7 +21,8 @@ exports.findAllRentals = async (req,res)=>{
                            { '$User.last_name$': { [Op.like]: `%${query}%` } },
                            {  '$Car.brand$': { [Op.like]: `%${query}%` } }
                        ]
-                }
+                },
+                order: [['id', 'DESC']],
                 }
             )
         }
@@ -29,11 +30,13 @@ exports.findAllRentals = async (req,res)=>{
             rentals = await Rental.findAll({
                 include:[{
                     model:Car
-                },
+                    },
                     {
                         model:User
                     }
-                ]
+                ],
+                order: [['id', 'DESC']],
+
             });
         }
         return res.status(200).json({

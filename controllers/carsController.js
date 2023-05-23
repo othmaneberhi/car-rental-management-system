@@ -47,6 +47,7 @@ exports.findAllCars = async (req,res) =>{
                         ]
 
                     },
+                order: [['id', 'DESC']],
                 }
             )
         }
@@ -78,6 +79,7 @@ exports.findAllCars = async (req,res) =>{
                     where: {
                         price:{[Op.between]: [minPrice,maxPrice]}
                     },
+                order: [['id', 'DESC']],
                 }
             )
 
@@ -94,13 +96,14 @@ exports.findAllCars = async (req,res) =>{
                             { year: { [Op.like]: `%${query}%` } },
                         ]
                     },
+                order: [['id', 'DESC']],
                 }
             )
         }
 
 
         else{
-            cars = await Car.findAll();
+            cars = await Car.findAll({ order: [['id', 'DESC']],});
         }
 
         return res.status(200).json({
