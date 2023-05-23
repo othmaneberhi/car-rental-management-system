@@ -6,9 +6,18 @@ const { secret, jwtExpiration, jwtRefreshExpiration } = require('../config/auth.
 exports.register = async (req, res) => {
 
     try {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^06\d{8}$/;
+
         const { first_name, last_name, phone, address, email, password } = req.body;
         if(!first_name || !last_name || !phone || !address ||!email || !password){
-            return res.status(500).json({ message: 'pleas provide required fields' });
+            return res.status(500).json({ message: 'please provide required fields' });
+        }
+        if(emailRegex.test(email)){
+            return res.status(500).json({ message: 'invalid email format' });
+        }
+        if(phoneRegex.test(phone)){
+            return res.status(500).json({ message: 'invalid phone format (expected: 06xxxxxxxx)' });
         }
         // Check if user with the same email already exists
         const existingUser = await User.findOne({ paranoid: false,where: { email } });
