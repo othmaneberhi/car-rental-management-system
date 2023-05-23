@@ -9,7 +9,6 @@ exports.isAdmin =(req,res,next)=> {
        token = token.split(' ')[1];
        const decoded = jwt.verify(token, process.env.JWT_SECRET);
        const isAdmin = decoded.isAdmin;
-       console.log(isAdmin)
        if (isAdmin) {
            next();
        } else {

@@ -10,6 +10,13 @@ exports.findAllUsers = async (req,res) =>{
             const phoneRegex = /^06\d{8}$/;
             if(emailRegex.test(query)){
                 users = await User.findAll({
+                    include:{
+                        model:Account,
+                        attributes:[],
+                        where:{
+                            isAdmin:false,
+                        }
+                    },
                         where: {
                             email: { [Op.like]: `%${query}%`}
                         },
@@ -18,6 +25,13 @@ exports.findAllUsers = async (req,res) =>{
             }
             else if(phoneRegex.test(query)){
                 users = await User.findAll({
+                    include:{
+                        model:Account,
+                        attributes:[],
+                        where:{
+                            isAdmin:false,
+                        }
+                    },
                         where: {
                             phone: { [Op.like]: `%${query}%`}
                         },
@@ -26,6 +40,13 @@ exports.findAllUsers = async (req,res) =>{
             }
             else{
                 users = await User.findAll({
+                    include:{
+                        model:Account,
+                        attributes:[],
+                        where:{
+                            isAdmin:false,
+                        }
+                    },
                         where: {
                             [Op.or]:[
                                 { first_name: { [Op.like]: `%${query}%` } },
@@ -39,7 +60,15 @@ exports.findAllUsers = async (req,res) =>{
 
         }
         else{
-            users = await User.findAll();
+            users = await User.findAll({
+                include:{
+                    model:Account,
+                    attributes:[],
+                    where:{
+                        isAdmin:false,
+                    }
+                },
+            });
         }
         return res.status(200).json({
             status:200,
