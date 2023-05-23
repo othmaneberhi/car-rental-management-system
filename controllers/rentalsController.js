@@ -158,5 +158,78 @@ exports.addRental = async (req,res)=>{
 }
 
 exports.setStatus = async (req,res)=>{
+    try{
 
+        const id = req.params.id
+        const status = req.query.status
+        if(!id){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no rental id provided"
+                }
+            })
+        }
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"Invalid id parameter"
+                }
+            })
+        }
+        const rental = await Rental.findByPk(id);
+        if(!rental){
+            return res.status(404).json({
+                status:404,
+                success:false,
+                error:{
+                    message:'Rental not found'
+                }
+            })
+        }
+
+        if(!status){
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:"no status query provided"
+                }
+            })
+        }
+        if (status !== 'pending' && status !== 'completed') {
+            return res.status(400).json({
+                status:400,
+                success:false,
+                error:{
+                    message:'Invalid status value'
+                }
+            });
+        }
+
+        rental.status = status
+        await rental.save()
+        return res.status(200).json({
+            status:200,
+            success:true,
+            message:"Rental's status updated successfully",
+            data:{
+                status:rental.status,
+                rental:rental,
+            }
+        })
+
+    }catch(error){
+        return res.status(500).json({
+            status:500,
+            success:false,
+            error:{
+                code:error.code,
+                message:error.message
+            },
+        })
+    }
 }
