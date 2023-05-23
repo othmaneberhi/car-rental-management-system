@@ -63,7 +63,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
         // Generate JWT token
-        const token = jwt.sign({ userId: user.id }, secret, { expiresIn: jwtExpiration });
+        const token = jwt.sign({ userId: user.id, isAdmin: account.isAdmin }, secret, { expiresIn: jwtExpiration });
         //generate refToken
         // const refreshToken = jwt.sign({ userId: user.id }, secret, {
         //     expiresIn: jwtRefreshExpiration,
