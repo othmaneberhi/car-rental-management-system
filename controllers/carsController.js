@@ -180,7 +180,118 @@ exports.findCarById = async (req,res)=>{
 
 exports.findAvailableCars = async (req,res)=>{
     try{
-        const cars = await Car.findAll({where:{status:1}})
+        const query = req.query.q
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
+        let cars =[];
+        if(minPrice && maxPrice && query){
+            if(isNaN(maxPrice) || isNaN(minPrice)){
+                return res.status(400).json({
+                    error:{
+                        status:400,
+                        success:false,
+                        error:{
+                            message:'invalid prices format (expected: Number)'
+                        }
+                    },
+                    success:false,
+                })
+            }
+
+            if (parseInt(minPrice)  > parseInt(maxPrice)) {
+                return res.status(400).json({
+                    status:400,
+                    success:false,
+                    error:{
+                        message: 'Min price should be less than max price'
+                    },
+                });
+            }
+            cars = await Car.findAll({
+                    where: {
+                        [Op.and]:[
+                            { [Op.or]:[
+                                    { brand: { [Op.like]: `%${query}%` } },
+                                    { model: { [Op.like]: `%${query}%` } },
+                                    { color: { [Op.like]: `%${query}%` } },
+                                    { price: { [Op.like]: `%${query}%` } },
+                                    { year: { [Op.like]: `%${query}%` } },
+
+                                ]
+                            },
+                            { price:{[Op.between]: [minPrice,maxPrice]}},
+                            {status:1},
+                        ]
+
+                    },
+                    order: [['id', 'DESC']],
+                }
+            )
+        }
+        else if(minPrice && maxPrice){
+            if(isNaN(maxPrice) || isNaN(minPrice)){
+                return res.status(400).json({
+                    error:{
+                        status:400,
+                        success:false,
+                        error:{
+                            message:'invalid prices format (expected: Number)'
+                        }
+                    },
+                    success:false,
+                })
+            }
+
+            if (parseInt(minPrice)  > parseInt(maxPrice)){
+                return res.status(400).json({
+                    status:400,
+                    success:false,
+                    error:{
+                        message: 'Min price should be less than max price'
+                    },
+                });
+            }
+
+            cars = await Car.findAll({
+                    where: {
+                        [Op.and]:[
+                            {status:1},
+                            { price:{[Op.between]: [minPrice,maxPrice]}}
+                        ]
+                    },
+                    order: [['id', 'DESC']],
+                }
+            )
+
+
+        }
+        else if(query){
+            cars = await Car.findAll({
+                    where: {
+                        [Op.and]:[
+                            {status:1},
+                            {
+                                [Op.or]:[
+                                    { brand: { [Op.like]: `%${query}%` } },
+                                    { model: { [Op.like]: `%${query}%` } },
+                                    { color: { [Op.like]: `%${query}%` } },
+                                    { price: { [Op.like]: `%${query}%` } },
+                                    { year: { [Op.like]: `%${query}%` } },
+                                ]
+                            }
+                        ]
+
+                    },
+                    order: [['id', 'DESC']],
+                }
+            )
+        }
+
+
+        else{
+            cars = await Car.findAll({ where:{status:1},order: [['id', 'DESC']],});
+        }
+
         return res.status(200).json({
             status:200,
             success:true,

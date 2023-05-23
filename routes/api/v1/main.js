@@ -13,7 +13,8 @@ let earningsRouter = require('./earnings');
 
 
 router.use('/', indexRouter);
-router.use('/auth', authRouter);
+router.use('/auth', authRouter.router);
+router.use('/admin/auth', authRouter.adminRouter);
 router.use('/cars', carsRouter);
 router.use('/customers', usersRouter);
 router.use('/rentals', rentalsRouter);
