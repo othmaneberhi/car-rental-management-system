@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User,Account,RefreshToken } = require('../models');
-const { secret, jwtExpiration, jwtRefreshExpiration } = require('../config/auth.config');
+const {  jwtExpiration, jwtRefreshExpiration } = require('../config/auth.config');
 
 exports.register = async (req, res) => {
 
@@ -13,10 +13,10 @@ exports.register = async (req, res) => {
         if(!first_name || !last_name || !phone || !address ||!email || !password){
             return res.status(500).json({ message: 'please provide required fields' });
         }
-        if(emailRegex.test(email)){
+        if(!emailRegex.test(email)){
             return res.status(500).json({ message: 'invalid email format' });
         }
-        if(phoneRegex.test(phone)){
+        if(!phoneRegex.test(phone)){
             return res.status(500).json({ message: 'invalid phone format (expected: 06xxxxxxxx)' });
         }
         // Check if user with the same email already exists
@@ -72,9 +72,9 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
         // Generate JWT token
-        const token = jwt.sign({ userId: user.id, isAdmin: account.isAdmin }, secret, { expiresIn: jwtExpiration });
+        const token = jwt.sign({ userId: user.id, isAdmin: account.isAdmin }, process.env.JWT_SECRET, { expiresIn: jwtExpiration });
         //generate refToken
-        // const refreshToken = jwt.sign({ userId: user.id }, secret, {
+        // const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
         //     expiresIn: jwtRefreshExpiration,
         // });
 

@@ -5,8 +5,6 @@ const {Op,fn,col} = require("sequelize");
 earningsSum = (pricePerDay,startDate,endDate) => {
     const timeDiff = Math.abs(startDate.getTime() - endDate.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    console.log("days: "+diffDays)
-    console.log("sum: "+pricePerDay*diffDays)
     return pricePerDay*diffDays
 }
 
